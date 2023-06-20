@@ -3,51 +3,54 @@ using UnityEngine.Rendering.PostProcessing;
 
 public class MirrorBlur : MonoBehaviour
 {
-    public Transform target;
-    public float blurAmount = 1f;
-    public float hpLossRate = 1f; // how much HP is lost per second of looking at the target
-    private PostProcessVolume volume;
+    [SerializeField] private float blurAmount;
+    [SerializeField] private PostProcessVolume volume;
+    [SerializeField] private new Camera camera;
     private DepthOfField depthOfField;
-    private float timeLookingAtTarget = 0f;
-    private bool isLookingAtTarget = false;
+    [SerializeField]private float angleValue;
+    public bool damageIsRecieving;
+    private GameObject[] targets;
 
     void Start()
     {
         volume = GetComponent<PostProcessVolume>();
         volume.profile.TryGetSettings(out depthOfField);
+
+        // Find all objects with the "Target" tag
+        targets = GameObject.FindGameObjectsWithTag("Mirror");
     }
 
     void Update()
     {
         if (IsLookingAtTarget())
         {
-            isLookingAtTarget = true;
-            timeLookingAtTarget += Time.deltaTime;
             SetBlurAmount(blurAmount);
+            damageIsRecieving = true;
         }
         else
         {
-            isLookingAtTarget = false;
-            timeLookingAtTarget = 0f;
             SetBlurAmount(0f);
+            damageIsRecieving = false;
         }
-
-        //if (isLookingAtTarget)
-        //{
-        //    PlayerController playerController = target.GetComponent<PlayerController>();
-        //    if (playerController != null)
-        //    {
-        //    hp -= 1;
-        //        playerController.health -= hpLossRate * Time.deltaTime;
-        //    }
-        //}
     }
 
     bool IsLookingAtTarget()
     {
-        Vector3 directionToTarget = target.position - Camera.main.transform.position;
-        float angle = Vector3.Angle(Camera.main.transform.forward , directionToTarget);
-        return angle < 30f; // adjust this angle to change the threshold for "looking at" the target
+        foreach (GameObject target in targets)
+        {
+            if (target == null)
+            {
+                continue;
+            }
+
+            Vector3 directionToTarget = target.transform.position - camera.transform.position;
+            float angle = Vector3.Angle(camera.transform.forward , directionToTarget);
+            if (angle < angleValue)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     void SetBlurAmount(float amount)

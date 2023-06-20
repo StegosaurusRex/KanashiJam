@@ -57,7 +57,7 @@ public class EnemyAI : MonoBehaviour
 
     private void EnemiesFollowSound()
     {
-            audioSource.Play();
+            //audioSource.Play();
     }
 
 

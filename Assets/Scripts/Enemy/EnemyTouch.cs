@@ -1,32 +1,29 @@
 using UnityEngine;
-using UnityEngine.Rendering.PostProcessing;
+using UnityEngine.UI;
 
 public class EnemyTouch : MonoBehaviour
 {
-    public PostProcessVolume postProcessVolume;
+
     public GameObject player;
 
-    private bool isFading = false;
+    [SerializeField]private GameManager gameManager;
+    private void Start()
+    {
+        GameManager gameManager = GetComponent<GameManager>();
+    }
 
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject == player)
         {
-            isFading = true;
-            //player.GetComponent<PlayerController>().enabled = false;
+            gameManager.GameOverScreen();
         }
     }
 
     void Update()
     {
-        if (isFading)
-        {
-            postProcessVolume.weight += Time.deltaTime;
-            if (postProcessVolume.weight >= 1f)
-            {
-                isFading = false;
-                postProcessVolume.weight = 1f;
-            }
-        }
+
     }
-}
+
+    }
+
