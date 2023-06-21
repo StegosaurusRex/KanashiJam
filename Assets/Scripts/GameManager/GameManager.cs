@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
     public void Resume()
     {
         pauseMenuUI.SetActive(false);
-
+        Cursor.lockState = CursorLockMode.Locked;
         characterController.RotationSpeed = 1f;
         Time.timeScale = 1f;
         Cursor.visible = false;
@@ -61,24 +61,14 @@ public class GameManager : MonoBehaviour
     {
         pauseMenuUI.SetActive(true);
         Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
         characterController.RotationSpeed = 0f;
         Time.timeScale = 0f;
         GameIsPaused = true;
 
 
     }
-    public void PauseGameOver()
-    {
-
-        StartCoroutine(WaitingBeforeDead());
-
-    }
-    public void PauseWinGame()
-    {
-        StartCoroutine(WaitingBeforeWin());
-
-
-    }
+  
     public void Restart()
     {
         SceneManager.LoadScene(1);
@@ -88,14 +78,39 @@ public class GameManager : MonoBehaviour
     {
         Application.Quit();
     }
+    
+    
+    public void GameOverScreen()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        characterController.MoveSpeed = 0f;
+        imageAnim.SetTrigger("Death");
+        StartCoroutine(WaitingBeforeDead());
+        
+
+    }
+
     IEnumerator WaitingBeforeDead()
     {
 
         yield return new WaitForSeconds(timeToDeath);
-        
+
         pauseMenuUIGameOver.SetActive(true);
         Time.timeScale = 0f;
         GameIsPaused = true;
+        Application.Quit();
+    }
+
+
+    public void GameWinScreen()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        characterController.MoveSpeed = 0f;
+        imageAliveAnim.SetTrigger("Live");
+        StartCoroutine(WaitingBeforeWin());
+        
 
     }
     IEnumerator WaitingBeforeWin()
@@ -107,22 +122,5 @@ public class GameManager : MonoBehaviour
         GameIsPaused = true;
         SceneManager.LoadScene(3);
     }
-    public void GameOverScreen()
-    {
-        characterController.MoveSpeed = 0f;
-        imageAnim.SetTrigger("Death");
-        StartCoroutine(WaitingBeforeDead());
-        
-
-    }
-    public void GameWinScreen()
-    {
-        characterController.MoveSpeed = 0f;
-        imageAliveAnim.SetTrigger("Live");
-        StartCoroutine(WaitingBeforeWin());
-        
-
-    }
-
 
 }
