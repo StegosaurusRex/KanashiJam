@@ -10,18 +10,31 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Animator imageAnim;
     [SerializeField] private Animator imageAliveAnim;
     [SerializeField] private PlayerHP playerHP;
+    [SerializeField] private EnemyAI enemyAI;
     [SerializeField]private FirstPersonController characterController; 
     public static bool GameIsPaused = false;
     public GameObject pauseMenuUI;
 
+    [SerializeField] private AudioClip audioClipDead;
+    [SerializeField] private AudioClip audioClipAlive;
+
+    [SerializeField] private AudioSource audioSource;
 
     [SerializeField] private float timeToDeath;
     [SerializeField] private float timeToWin;
+    [SerializeField] private float timeToExit;
     public GameObject pauseMenuUIGameOver;
     public GameObject pauseMenuUIWinGame;
     private void Start()
     {
         PlayerHP playerHP = GetComponent<PlayerHP>();
+        EnemyAI enemyAI = GetComponent<EnemyAI>();
+        // Get the AudioSource component
+        audioSource = GetComponent<AudioSource>();
+
+        // Load the audio clip
+        
+        audioSource.clip = audioClipAlive;
     }
 
     void Update()
@@ -95,11 +108,13 @@ public class GameManager : MonoBehaviour
     {
 
         yield return new WaitForSeconds(timeToDeath);
-
+        playerHP.audioSource.Stop();
+        audioSource.clip = audioClipDead;
+        audioSource.Play();
         pauseMenuUIGameOver.SetActive(true);
         Time.timeScale = 0f;
         GameIsPaused = true;
-        Application.Quit();
+        
     }
 
 
@@ -117,10 +132,12 @@ public class GameManager : MonoBehaviour
     {
 
         yield return new WaitForSeconds(timeToWin);
-
+        audioSource.clip = audioClipAlive;
+        audioSource.Play();
         Time.timeScale = 0f;
         GameIsPaused = true;
-        SceneManager.LoadScene(3);
+        yield return new WaitForSeconds(timeToExit);
+        Application.Quit();
     }
 
 }

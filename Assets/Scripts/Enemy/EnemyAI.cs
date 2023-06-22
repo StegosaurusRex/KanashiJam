@@ -8,18 +8,24 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private float currentSpeed;
     [SerializeField] private float originalSpeed;
     [SerializeField] private Camera playerCamera;
-    [SerializeField] private AudioSource audioSource;
     [SerializeField]private NavMeshAgent navMeshAgent;
 
+    private void Start()
+    {
+
+    }
     void Update()
     {
 
         if (IsVisibleInCamera())
-        {
+        { 
             StopMoving();
+
         }
         else
         {
+            // Load the audio clip
+            
             StartMoving();
             EnemiesFollowSound();
             SetDestination();
@@ -37,6 +43,7 @@ public class EnemyAI : MonoBehaviour
     private void StopMoving()
     {
         navMeshAgent.speed = 0f;
+        
     }
 
     private void StartMoving()
@@ -57,7 +64,8 @@ public class EnemyAI : MonoBehaviour
 
     private void EnemiesFollowSound()
     {
-            //audioSource.Play();
+        
+        
     }
 
 

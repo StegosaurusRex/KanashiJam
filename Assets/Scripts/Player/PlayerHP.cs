@@ -10,7 +10,8 @@ public class PlayerHP : MonoBehaviour
     [SerializeField] public int hp;
     [SerializeField] private float damageTimer;
     [SerializeField] private float damageCooldown;
-    [SerializeField] private AudioSource audioSource;
+    [SerializeField] public AudioSource audioSource;
+    [SerializeField] private AudioClip audioClip;
     [SerializeField] private MirrorBlur mirrorBlur;
     void Start()
     {
@@ -18,12 +19,15 @@ public class PlayerHP : MonoBehaviour
         audioSource = GetComponent<AudioSource>(); // Get the audio source component
         MirrorBlur mirrorBlur = GetComponent<MirrorBlur>();
 
+        // Load the audio clip
+        audioSource.clip = audioClip;
+
     }
     void Update()
     {
         damageTimer -= Time.deltaTime;
         DamageReceiveng();
- 
+
     }
     private void DamageReceiveng()
     {
@@ -32,6 +36,7 @@ public class PlayerHP : MonoBehaviour
         {
             if(damageTimer <= 0)
             {
+                audioSource.Play();
                 hp -= hpLossRate;
                 damageTimer = damageCooldown;
             }
