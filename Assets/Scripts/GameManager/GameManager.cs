@@ -9,11 +9,12 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private Animator imageAnim;
     [SerializeField] private Animator imageAliveAnim;
+    [SerializeField] private Animator youWon;
     [SerializeField] private PlayerHP playerHP;
     [SerializeField] private EnemyAI enemyAI;
     [SerializeField]private FirstPersonController characterController; 
     public static bool GameIsPaused = false;
-    public GameObject pauseMenuUI;
+    [SerializeField] private GameObject pauseMenuUI;
 
     [SerializeField] private AudioClip audioClipDead;
     [SerializeField] private AudioClip audioClipAlive;
@@ -23,10 +24,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float timeToDeath;
     [SerializeField] private float timeToWin;
     [SerializeField] private float timeToExit;
-    public GameObject pauseMenuUIGameOver;
-    public GameObject pauseMenuUIWinGame;
+    [SerializeField] private GameObject pauseMenuUIGameOver;
+    [SerializeField] private GameObject audioManager;
+    
     private void Start()
     {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.Locked;
         PlayerHP playerHP = GetComponent<PlayerHP>();
         EnemyAI enemyAI = GetComponent<EnemyAI>();
         // Get the AudioSource component
@@ -35,6 +39,7 @@ public class GameManager : MonoBehaviour
         // Load the audio clip
         
         audioSource.clip = audioClipAlive;
+        Resume();
     }
 
     void Update()
@@ -121,8 +126,9 @@ public class GameManager : MonoBehaviour
     public void GameWinScreen()
     {
         Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        Cursor.visible = false;
         characterController.MoveSpeed = 0f;
+        Destroy(audioManager);
         imageAliveAnim.SetTrigger("Live");
         StartCoroutine(WaitingBeforeWin());
         
@@ -137,7 +143,8 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
         GameIsPaused = true;
         yield return new WaitForSeconds(timeToExit);
-        Application.Quit();
+        
+        
     }
 
 }

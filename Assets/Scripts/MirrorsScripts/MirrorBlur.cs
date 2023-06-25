@@ -6,6 +6,7 @@ public class MirrorBlur : MonoBehaviour
     [SerializeField] private float blurAmount;
     [SerializeField] private PostProcessVolume volume;
     [SerializeField] private new Camera camera;
+    [SerializeField] private GameObject myGameObject;
     private DepthOfField depthOfField;
     [SerializeField]private float angleValue;
     public bool damageIsRecieving;
@@ -36,21 +37,27 @@ public class MirrorBlur : MonoBehaviour
 
     bool IsLookingAtTarget()
     {
-        foreach (GameObject target in targets)
+        if (myGameObject.activeSelf)
         {
-            if (target == null)
+            foreach (GameObject target in targets)
             {
-                continue;
-            }
+                if (target == null)
+                {
+                    continue;
+                }
 
-            Vector3 directionToTarget = target.transform.position - camera.transform.position;
-            float angle = Vector3.Angle(camera.transform.forward , directionToTarget);
-            if (angle < angleValue)
-            {
-                return true;
+                Vector3 directionToTarget = target.transform.position - camera.transform.position;
+                float angle = Vector3.Angle(camera.transform.forward , directionToTarget);
+                if (angle < angleValue)
+                {
+                    return true;
+                }
             }
+            
         }
         return false;
+
+
     }
 
     void SetBlurAmount(float amount)

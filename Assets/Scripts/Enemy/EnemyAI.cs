@@ -7,16 +7,23 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private GameObject player;
     [SerializeField] private float currentSpeed;
     [SerializeField] private float originalSpeed;
+    [SerializeField] private float timeToPlayTrack;
     [SerializeField] private Camera playerCamera;
-    [SerializeField]private NavMeshAgent navMeshAgent;
-
+    [SerializeField] private NavMeshAgent navMeshAgent;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip audioClip;
+    [SerializeField] private float soundTimer;
+    [SerializeField] private float soundCooldown;
     private void Start()
     {
+        audioSource = GetComponent<AudioSource>(); // Get the audio source component
 
+        // Load the audio clip
+        audioSource.clip = audioClip;
     }
     void Update()
     {
-
+        soundTimer -= Time.deltaTime;
         if (IsVisibleInCamera())
         { 
             StopMoving();
@@ -27,7 +34,6 @@ public class EnemyAI : MonoBehaviour
             // Load the audio clip
             
             StartMoving();
-            EnemiesFollowSound();
             SetDestination();
             SetSpeed();
         }
@@ -43,12 +49,18 @@ public class EnemyAI : MonoBehaviour
     private void StopMoving()
     {
         navMeshAgent.speed = 0f;
+        audioSource.Stop();
         
     }
 
     private void StartMoving()
     {
         currentSpeed = originalSpeed;
+        if (soundTimer <= 0)
+        {
+            audioSource.Play();
+            soundTimer = soundCooldown;
+        }
     }
 
 
@@ -62,9 +74,11 @@ public class EnemyAI : MonoBehaviour
         navMeshAgent.speed = currentSpeed;
     }
 
-    private void EnemiesFollowSound()
+    IEnumerator EnemiesStepsSounds()
     {
-        
+
+        yield return new WaitForSeconds(timeToPlayTrack);
+        audioSource.Play();
         
     }
 
